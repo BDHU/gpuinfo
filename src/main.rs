@@ -1,9 +1,9 @@
 mod argparse;
-mod GPUstat;
+mod gpustat;
+
+use gpustat::*;
 
 use nvml_wrapper::NVML;
-use nvml_wrapper::error::NvmlError;
-use nvml_wrapper::enum_wrappers::device::{Clock, TemperatureSensor};
 
 #[cfg(not(target_os = "linux"))]
 fn main() {
@@ -28,22 +28,24 @@ pub fn nvidia_gpu_exec(opt: argparse::Opt) -> Result<(), nvml_wrapper::error::Nv
     
     for i in 0..device_count {
         let device = nvml.device_by_index(i)?;
-        print_device_info(device)?;
+        dump_gpu_stat(device);
     }
     
     Ok(())
 }
 
-pub fn print_device_info(device: nvml_wrapper::Device) -> Result<(), nvml_wrapper::error::NvmlErrorWithSource> {
-    let index = device.index()?;
-    let name = device.name()?;
-    let mem_info = device.memory_info()?;
-    let temperature = device.temperature(TemperatureSensor::Gpu)?;
+// pub fn print_device_info(device: nvml_wrapper::Device) -> Result<(), nvml_wrapper::error::NvmlErrorWithSource> {
+//     let index = device.index()?;
+//     let name = device.name()?;
+//     let utilization_rates = device.utilization_rates()?;
+//     let mem_info = device.memory_info()?;
+//     let temperature = device.temperature(TemperatureSensor::Gpu)?;
 
 
-    print!("[{}]: {} | ", index, name);
-    print!("{}°C | ", temperature);
-    println!("{} / {} MB", mem_info.used / 1024 / 1024, mem_info.total / 1024 / 1024);
+//     print!("[{}]: {} | ", index, name);
+//     print!("{} % | ", utilization_rates.memory);
+//     print!("{} / {} MB | ", mem_info.used / 1024 / 1024, mem_info.total / 1024 / 1024);
+//     println!("{}°C", temperature);
 
-    Ok(())
-}
+//     Ok(())
+// }
