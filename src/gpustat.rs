@@ -1,10 +1,16 @@
+use sysinfo::{ProcessExt, System, SystemExt};
+use std::{thread, time};
+use std::io::{Write, stdout};
+use crossterm::{QueueableCommand, cursor};
+
 use nvml_wrapper::{
     NVML,
 };
 use nvml_wrapper::enum_wrappers::device::{
     Clock,
-    TemperatureSensor
+    TemperatureSensor,
 };
+use nvml_wrapper::enums::device::UsedGpuMemory;
 use nvml_wrapper::error::NvmlError as NvmlError;
 use nvml_wrapper::device::*;
 use nvml_wrapper::structs::device::*;
@@ -18,10 +24,10 @@ pub struct GPUstat {
     memory_info: Result<MemoryInfo, NvmlError>,
     fan_speed: Result<u32, NvmlError>,
     temperature: Result<u32, NvmlError>,
-    running_compute_processes: Result<Vec<ProcessInfo>, NvmlError>,
+    running_graphics_processes: Result<Vec<ProcessInfo>, NvmlError>,
 }
 
-pub fn read_gpu_stat(device: nvml_wrapper::Device) -> GPUstat {
+pub fn read_gpu_stat(device: &nvml_wrapper::Device) -> GPUstat {
     let gpustat = GPUstat {
         name: device.name(),
         id: device.index(),
@@ -30,14 +36,14 @@ pub fn read_gpu_stat(device: nvml_wrapper::Device) -> GPUstat {
         memory_info: device.memory_info(),
         fan_speed: device.fan_speed(0), // Currently only take one fan, will add more fan readings
         temperature: device.temperature(TemperatureSensor::Gpu),
-        running_compute_processes: device.running_compute_processes(),
+        running_graphics_processes: device.running_graphics_processes(),
     };
 
     return gpustat;
 }
 
 pub fn dump_gpu_stat(device: nvml_wrapper::Device) {
-    let gpustat = read_gpu_stat(device);
+    let gpustat = read_gpu_stat(&device);
     let mut result = "".to_owned();
 
     let id = match gpustat.id {
@@ -65,18 +71,17 @@ pub fn dump_gpu_stat(device: nvml_wrapper::Device) {
     result.push_str(&utilization_rates);
 
     let memory_info = match gpustat.memory_info {
-        Ok(memory_info) => format!("{:>width1$} / {:<width2$} MB | ", memory_info.used / 1024 / 1024, memory_info.total / 1024 / 1024,
-            width1 = (memory_info.total / 1024 / 1024).to_string().chars().count(),
-            width2 = (memory_info.total / 1024 / 1024).to_string().chars().count()),
+        Ok(memory_info) => format!("{:>width$} / {:<width$} MB | ", memory_info.used / 1024 / 1024, memory_info.total / 1024 / 1024,
+            width = (memory_info.total / 1024 / 1024).to_string().chars().count()),
         Err(_err) => "".to_string(),
     };
     result.push_str(&memory_info);
 
-    let fan_speed = match gpustat.fan_speed {
-        Ok(fan_speed) => format!("{:>3} % | ", fan_speed),
-        Err(_err) => "".to_string(),
-    };
-    result.push_str(&fan_speed);
+    // let fan_speed = match gpustat.fan_speed {
+    //     Ok(fan_speed) => format!("{:>3} % | ", fan_speed),
+    //     Err(_err) => "".to_string(),
+    // };
+    // result.push_str(&fan_speed);
 
     let temperature = match gpustat.temperature {
         Ok(temperature) => format!("{:>3}°C | ", temperature),
@@ -84,5 +89,38 @@ pub fn dump_gpu_stat(device: nvml_wrapper::Device) {
     };
     result.push_str(&temperature);
 
-    println!("{}", result);
+    let mut sys: sysinfo::System = System::new_all();
+
+    let graphics_processes = match gpustat.running_graphics_processes {
+        Ok(processes) => {
+            let mut all_processes_info = String::new();
+            for p in processes.iter() {
+                let p_name = get_process_name(&sys, p.pid);
+                let used_mem = match p.used_gpu_memory {
+                    UsedGpuMemory::Used(used) => used,
+                    _ => 0,
+                };
+                all_processes_info.push_str(&format!("{}: {}MB  ", p_name, used_mem / 1024 / 1024));
+            }
+            all_processes_info
+        },
+        Err(_err) => "".to_string(),
+    };
+    result.push_str(&graphics_processes);
+
+    // println!("{}", result);
+
+    let mut stdout = stdout();
+    stdout.queue(cursor::SavePosition);
+    stdout.write(result.as_bytes());
+    stdout.queue(cursor::RestorePosition);
+    stdout.flush();
+    thread::sleep(time::Duration::from_millis(500));
+    // stdout.queue(crossterm::terminal::Clear(crossterm::terminal::ClearType::UntilNewLine));
+
+    print!("\r");
+}
+
+fn get_process_name(sys: &sysinfo::System, pid: u32)-> String {
+    sys.get_process(pid as i32).unwrap().name().to_string()
 }
