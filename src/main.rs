@@ -5,6 +5,8 @@ use gpustat::*;
 
 use nvml_wrapper::NVML;
 
+use std::{thread, time::Duration};
+
 #[cfg(not(target_os = "linux"))]
 fn main() {
     println!("Currently only Linux unsupported :(");
@@ -14,9 +16,9 @@ fn main() {
 fn main() {
     let opt = argparse::argparse();
 
-    let nvidia_gpu_stat = nvidia_gpu_exec(opt);
-    let nvidia_gpu_stat = match nvidia_gpu_stat {
-        Ok(nvidia_gpu_stat) => nvidia_gpu_stat,
+    // let nvidia_gpu_stat = nvidia_gpu_exec(opt);
+    match nvidia_gpu_exec(opt) {
+        Ok(_nvidia_gpu_stat) => (),
         Err(error) => panic!("Failed to grab status for NVIDIA GPU, exiting with err: {:?}", error),
     };
     // TODO: amd_gpu_exec();
@@ -24,19 +26,12 @@ fn main() {
 
 pub fn nvidia_gpu_exec(opt: argparse::Opt) -> Result<(), nvml_wrapper::error::NvmlErrorWithSource> {
     let nvml = NVML::init()?;
-    let device_count = nvml.device_count()?;
-    
-    for i in 0..device_count {
-        let device = nvml.device_by_index(i)?;
-        dump_gpu_stat(device);
-    }
+    dump_all_gpu_stats(&nvml)?;
 
     if opt.watch {
         loop {
-            for i in 0..device_count {
-                let device = nvml.device_by_index(i)?;
-                dump_gpu_stat(device);
-            }
+            dump_all_gpu_stats(&nvml)?;
+            thread::sleep(Duration::from_secs(1));
         }
     }
     

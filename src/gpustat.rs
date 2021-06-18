@@ -1,18 +1,10 @@
 use sysinfo::{ProcessExt, System, SystemExt};
-use std::{thread, time};
-use std::io::{Write, stdout};
-use crossterm::{QueueableCommand, cursor};
 
-use nvml_wrapper::{
-    NVML,
-};
 use nvml_wrapper::enum_wrappers::device::{
-    Clock,
     TemperatureSensor,
 };
 use nvml_wrapper::enums::device::UsedGpuMemory;
 use nvml_wrapper::error::NvmlError as NvmlError;
-use nvml_wrapper::device::*;
 use nvml_wrapper::structs::device::*;
 use nvml_wrapper::struct_wrappers::device::*;
 
@@ -89,7 +81,7 @@ pub fn dump_gpu_stat(device: nvml_wrapper::Device) {
     };
     result.push_str(&temperature);
 
-    let mut sys: sysinfo::System = System::new_all();
+    let sys: sysinfo::System = System::new_all();
 
     let graphics_processes = match gpustat.running_graphics_processes {
         Ok(processes) => {
@@ -108,17 +100,20 @@ pub fn dump_gpu_stat(device: nvml_wrapper::Device) {
     };
     result.push_str(&graphics_processes);
 
-    // println!("{}", result);
+    println!("{}", result);
+}
 
-    let mut stdout = stdout();
-    stdout.queue(cursor::SavePosition);
-    stdout.write(result.as_bytes());
-    stdout.queue(cursor::RestorePosition);
-    stdout.flush();
-    thread::sleep(time::Duration::from_millis(500));
-    // stdout.queue(crossterm::terminal::Clear(crossterm::terminal::ClearType::UntilNewLine));
+pub fn dump_all_gpu_stats(nvml: &nvml_wrapper::NVML) -> Result<(), nvml_wrapper::error::NvmlErrorWithSource> {
+    let device_count = nvml.device_count()?;
+    
+    for i in 0..device_count {
+        let device = nvml.device_by_index(i)?;
+        println!();
+        dump_gpu_stat(device);
+        println!();
+    }
 
-    print!("\r");
+    return Ok(());
 }
 
 fn get_process_name(sys: &sysinfo::System, pid: u32)-> String {
