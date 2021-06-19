@@ -14,7 +14,7 @@ pub struct GPUstat {
     compute_capability: Result<CudaComputeCapability, NvmlError>,
     utilization_rates: Result<Utilization, NvmlError>,
     memory_info: Result<MemoryInfo, NvmlError>,
-    fan_speed: Result<u32, NvmlError>,
+    // fan_speed: Result<u32, NvmlError>,
     temperature: Result<u32, NvmlError>,
     running_graphics_processes: Result<Vec<ProcessInfo>, NvmlError>,
 }
