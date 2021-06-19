@@ -14,7 +14,7 @@ pub struct GPUstat {
     compute_capability: Result<CudaComputeCapability, NvmlError>,
     utilization_rates: Result<Utilization, NvmlError>,
     memory_info: Result<MemoryInfo, NvmlError>,
-    fan_speed: Result<u32, NvmlError>,
+    // fan_speed: Result<u32, NvmlError>,
     temperature: Result<u32, NvmlError>,
     running_graphics_processes: Result<Vec<ProcessInfo>, NvmlError>,
 }
@@ -26,7 +26,7 @@ pub fn read_gpu_stat(device: &nvml_wrapper::Device) -> GPUstat {
         compute_capability: device.cuda_compute_capability(),
         utilization_rates: device.utilization_rates(),
         memory_info: device.memory_info(),
-        fan_speed: device.fan_speed(0), // Currently only take one fan, will add more fan readings
+        // fan_speed: device.fan_speed(0), // Currently only take one fan, will add more fan readings
         temperature: device.temperature(TemperatureSensor::Gpu),
         running_graphics_processes: device.running_graphics_processes(),
     };
@@ -69,11 +69,11 @@ pub fn dump_gpu_stat(device: nvml_wrapper::Device) {
     };
     result.push_str(&memory_info);
 
-    let fan_speed = match gpustat.fan_speed {
-        Ok(fan_speed) => format!("{:>3} % | ", fan_speed),
-        Err(_err) => "".to_string(),
-    };
-    result.push_str(&fan_speed);
+    // let fan_speed = match gpustat.fan_speed {
+    //     Ok(fan_speed) => format!("{:>3} % | ", fan_speed),
+    //     Err(_err) => "".to_string(),
+    // };
+    // result.push_str(&fan_speed);
 
     let temperature = match gpustat.temperature {
         Ok(temperature) => format!("{:>3}°C | ", temperature),
@@ -98,7 +98,11 @@ pub fn dump_gpu_stat(device: nvml_wrapper::Device) {
         },
         Err(_err) => "".to_string(),
     };
-    result.push_str(&graphics_processes);
+    if graphics_processes.chars().count() < 1 {
+        result.push_str("No running processes found");
+    } else {
+        result.push_str(&graphics_processes);
+    }
 
     println!("{}", result);
 }
