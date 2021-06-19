@@ -1,3 +1,26 @@
 # gpuinfo
 
-GPU information library (x86/x86-64/ARM/ARM64, Linux)
+A small command-line tool used to query and monitor GPU status.
+
+NOTE: We only support NVIDIA GPU currently, AMD GPU is not yet supported. All contributions are welcome! This is an ongoing project and there might be changes in the future.
+
+## Usage
+
+```bash
+$ gpu-info
+```
+
+Options:
+
+* `-w`, `--watch`: Prints GPU information to terminal every second
+* `-i`, `--interval <interval>`: Prints GPU information to terminal according to given interval (seconds)
+
+## Installation
+
+```bash
+cargo install gpuinfo
+```
+
+## License
+
+[MIT License](https://github.com/BDHU/gpuinfo/blob/main/LICENSE)
