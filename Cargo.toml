@@ -1,5 +1,5 @@
 [package]
-name = "gpu-info"
+name = "gpuinfo"
 version = "0.1.0"
 authors = ["Edward Hu <bodunhu@utexas.edu>"]
 edition = "2018"
@@ -11,6 +11,9 @@ readme = "README.md"
 keywords = ["rust", "gpu", "nvidia-smi", "command-line", "monitoring"]
 categories = ["command-line-utilities", "gpu"]
 
+[[bin]]
+name = "gpu-info"
+path = "src/main.rs"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
