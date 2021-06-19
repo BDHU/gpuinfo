@@ -26,13 +26,19 @@ fn main() {
 
 pub fn nvidia_gpu_exec(opt: argparse::Opt) -> Result<(), nvml_wrapper::error::NvmlErrorWithSource> {
     let nvml = NVML::init()?;
-    dump_all_gpu_stats(&nvml)?;
 
     if opt.watch {
         loop {
             dump_all_gpu_stats(&nvml)?;
             thread::sleep(Duration::from_secs(1));
         }
+    } else if match opt.interval { None => false, _u64 => true, } {
+        loop {
+            dump_all_gpu_stats(&nvml)?;
+            thread::sleep(Duration::from_secs(opt.interval.unwrap()));
+        }
+    } else {
+        dump_all_gpu_stats(&nvml)?;
     }
     
     Ok(())
