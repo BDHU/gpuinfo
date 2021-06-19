@@ -45,7 +45,7 @@ Output
 * `0 %`: Current GPU utilization rate
 * `1544 / 16280 MB`: GPU device memory usage
 * `37°C`: GPU temperature
-* `No running processes found`: Currently running processes on the GPU (could be empty due to privilege issue).
+* `No running processes found`: Currently running processes on the GPU (note: only processes the user have privilege to access are shown).
 
 License
 -------
