@@ -1,10 +1,10 @@
 [package]
 name = "gpuinfo"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Edward Hu <bodunhu@utexas.edu>"]
 edition = "2018"
 license = "MIT"
-description = "A minimal command-line utility for querying GPU status written in Rust"
+description = "A minimal command-line utility for querying GPU status"
 homepage = "https://github.com/BDHU/gpuinfo"
 repository = "https://github.com/BDHU/gpuinfo"
 readme = "README.md"

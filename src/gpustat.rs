@@ -99,7 +99,7 @@ pub fn dump_gpu_stat(device: nvml_wrapper::Device) {
         Err(_err) => "".to_string(),
     };
     if graphics_processes.chars().count() < 1 {
-        result.push_str("No running processes found");
+        result.push_str(" No running processes found");
     } else {
         result.push_str(&graphics_processes);
     }
