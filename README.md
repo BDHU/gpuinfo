@@ -1,6 +1,8 @@
-# gpuinfo
+# gpu-info
 
 A small command-line tool used to query and monitor GPU status.
+
+![gpu-info-screenshot](https://raw.githubusercontent.com/BDHU/gpuinfo/main/gpu-info.png)
 
 NOTE: We only support NVIDIA GPU currently, AMD GPU is not yet supported. All contributions are welcome! This is an ongoing project and there might be changes in the future.
 
@@ -18,7 +20,7 @@ Options:
 ## Installation
 
 ```bash
-cargo install gpuinfo
+cargo install gpu-info
 ```
 
 ## License
