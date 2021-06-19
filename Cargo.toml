@@ -8,7 +8,7 @@ description = "A minimal command-line utility for querying GPU status written in
 homepage = "https://github.com/BDHU/gpuinfo"
 repository = "https://github.com/BDHU/gpuinfo"
 readme = "README.md"
-keywords = ["rust", "gpu", "cuda", "nvidia-smi", "command-line", "monitoring"]
+keywords = ["rust", "gpu", "nvidia-smi", "command-line", "monitoring"]
 categories = ["command-line-utilities", "gpu"]
 
 
