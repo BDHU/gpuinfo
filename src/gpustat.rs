@@ -14,7 +14,7 @@ pub struct GPUstat {
     compute_capability: Result<CudaComputeCapability, NvmlError>,
     utilization_rates: Result<Utilization, NvmlError>,
     memory_info: Result<MemoryInfo, NvmlError>,
-    // fan_speed: Result<u32, NvmlError>,
+    fan_speed: Result<u32, NvmlError>,
     temperature: Result<u32, NvmlError>,
     running_graphics_processes: Result<Vec<ProcessInfo>, NvmlError>,
 }
@@ -69,11 +69,11 @@ pub fn dump_gpu_stat(device: nvml_wrapper::Device) {
     };
     result.push_str(&memory_info);
 
-    // let fan_speed = match gpustat.fan_speed {
-    //     Ok(fan_speed) => format!("{:>3} % | ", fan_speed),
-    //     Err(_err) => "".to_string(),
-    // };
-    // result.push_str(&fan_speed);
+    let fan_speed = match gpustat.fan_speed {
+        Ok(fan_speed) => format!("{:>3} % | ", fan_speed),
+        Err(_err) => "".to_string(),
+    };
+    result.push_str(&fan_speed);
 
     let temperature = match gpustat.temperature {
         Ok(temperature) => format!("{:>3}°C | ", temperature),
