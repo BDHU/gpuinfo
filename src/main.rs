@@ -29,12 +29,16 @@ pub fn nvidia_gpu_exec(opt: argparse::Opt) -> Result<(), nvml_wrapper::error::Nv
 
     if opt.watch {
         loop {
+            println!();
             dump_all_gpu_stats(&nvml)?;
+            println!();
             thread::sleep(Duration::from_secs(1));
         }
     } else if match opt.interval { None => false, _u64 => true, } {
         loop {
+            println!();
             dump_all_gpu_stats(&nvml)?;
+            println!();
             thread::sleep(Duration::from_secs(opt.interval.unwrap()));
         }
     } else {

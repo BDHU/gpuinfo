@@ -108,9 +108,7 @@ pub fn dump_all_gpu_stats(nvml: &nvml_wrapper::NVML) -> Result<(), nvml_wrapper:
     
     for i in 0..device_count {
         let device = nvml.device_by_index(i)?;
-        println!();
         dump_gpu_stat(device);
-        println!();
     }
 
     return Ok(());
