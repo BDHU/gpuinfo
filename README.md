@@ -3,6 +3,7 @@
 [![Crates.io version](https://img.shields.io/crates/v/gpuinfo.svg?style=flat-square)](https://crates.io/crates/gpuinfo)
 [![license](https://img.shields.io/github/license/BDHU/gpuinfo.svg?maxAge=86400)](LICENSE)
 [![dependency status](https://deps.rs/repo/github/BDHU/gpuinfo/status.svg)](https://deps.rs/repo/github/BDHU/gpuinfo)
+![CI](https://github.com/BDHU/gpuinfo/actions/workflows/github-action.yml/badge.svg)
 
 A small command-line tool used to query and monitor GPU status.
 
