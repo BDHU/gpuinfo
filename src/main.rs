@@ -7,12 +7,6 @@ use nvml_wrapper::NVML;
 
 use std::{thread, time::Duration};
 
-#[cfg(not(target_os = "linux"))]
-fn main() {
-    println!("Currently only Linux unsupported :(");
-}
-
-#[cfg(target_os = "linux")]
 fn main() {
     let opt = argparse::argparse();
 

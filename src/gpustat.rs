@@ -118,6 +118,12 @@ pub fn dump_all_gpu_stats(nvml: &nvml_wrapper::NVML) -> Result<(), nvml_wrapper:
     return Ok(());
 }
 
+#[cfg(not(target_os = "windows"))]
 fn get_process_name(sys: &sysinfo::System, pid: u32)-> String {
     sys.get_process(pid as i32).unwrap().name().to_string()
+}
+
+#[cfg(target_os = "windows")]
+fn get_process_name(sys: &sysinfo::System, pid: u32)-> String {
+    sys.get_process(pid as usize).unwrap().name().to_string()
 }
