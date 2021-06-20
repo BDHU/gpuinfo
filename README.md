@@ -9,7 +9,7 @@ A small command-line tool used to query and monitor GPU status.
 
 ![gpuinfo-screenshot](gpuinfo.png)
 
-NOTE: We only support NVIDIA GPU currently, AMD GPU is not yet supported. All contributions are welcome! This is an ongoing project and there might be changes in the future.
+NOTE: We only support NVIDIA GPU currently, AMD GPU is not yet supported. All contributions are welcome! This is an ongoing project and there might be changes in the future. The tool is tested on Linux. It might also work on macOS and Windows with some features missing.
 
 Usage
 -----
@@ -29,7 +29,7 @@ NOTE: more options are to be added.
 Installation
 ------------
 
-The crate is publicly available at [crates.io](https://crates.io/crates/gpuinfo/0.1.0):
+The crate is publicly available at [crates.io](https://crates.io/crates/gpuinfo):
 
 ```bash
 cargo install gpuinfo
