@@ -10,6 +10,7 @@ repository = "https://github.com/BDHU/gpuinfo"
 readme = "README.md"
 keywords = ["rust", "gpu", "nvidia-smi", "command-line", "monitoring"]
 categories = ["command-line-utilities", "gpu"]
+exclude = ["*.png", "*.jpg"]
 
 [[bin]]
 name = "gpu-info"
