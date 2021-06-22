@@ -198,6 +198,11 @@ pub fn dump_gpu_stat(device: nvml_wrapper::device::Device) {
             println!("return error");
         }
         println!("Device is {}", is_mig_device);
+
+        let mut max_mig_device_count: raw::c_uint = 0 as raw::c_uint;
+        let max_mig_device_count_ptr: *mut raw::c_uint = &mut max_mig_device_count as *mut raw::c_uint;
+        nvml_lib.nvmlDeviceGetMaxMigDeviceCount(raw_device_handle, max_mig_device_count_ptr);
+        println!("max mig count is {}", max_mig_device_count);
     }
 
     println!("{}", result);
