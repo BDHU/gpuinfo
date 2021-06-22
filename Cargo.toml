@@ -22,6 +22,7 @@ path = "src/main.rs"
 [dependencies]
 structopt = "^0.3"
 nvml-wrapper = "^0.7.0"
+nvml-wrapper-sys = "^0.5.0"
 sysinfo = "^0.18.0"
 
 [profile.release]
