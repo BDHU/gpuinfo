@@ -185,9 +185,6 @@ pub fn dump_gpu_stat(device: nvml_wrapper::device::Device) {
         result.push_str(&graphics_processes);
     }
 
-    // Check CUDA version before MiG check
-
-
     unsafe {
         let raw_device_handle: nvmlDevice_t = device.handle();
         let nvml_lib = NvmlLib::new("libnvidia-ml.so").unwrap();
@@ -196,6 +193,7 @@ pub fn dump_gpu_stat(device: nvml_wrapper::device::Device) {
         let cuda_driver_version_ptr : *mut raw::c_int = &mut cuda_driver_version as *mut raw::c_int;
         nvml_lib.nvmlSystemGetCudaDriverVersion(cuda_driver_version_ptr);
 
+         // Check CUDA version before MiG check
         if cuda_driver_version/1000 >= 11 {
             let mut is_mig_device: raw::c_uint = 0 as raw::c_uint;
             let is_mig_device_ptr: *mut raw::c_uint = &mut is_mig_device as *mut raw::c_uint;
@@ -204,7 +202,6 @@ pub fn dump_gpu_stat(device: nvml_wrapper::device::Device) {
             nvml_lib.nvmlDeviceGetMigDeviceHandleByIndex(raw_device_handle, 0 as raw::c_uint, new_mig_device_handle_ptr);
 
             if nvml_lib.nvmlDeviceIsMigDeviceHandle(new_mig_device_handle, is_mig_device_ptr) == nvml_wrapper_sys::bindings::nvmlReturn_enum_NVML_SUCCESS {
-                // println!("return error");
                 if is_mig_device == 1 as u32 {
                     let mut max_mig_device_count: raw::c_uint = 0 as raw::c_uint;
                     let max_mig_device_count_ptr: *mut raw::c_uint = &mut max_mig_device_count as *mut raw::c_uint;
@@ -212,11 +209,6 @@ pub fn dump_gpu_stat(device: nvml_wrapper::device::Device) {
                     result.push_str(&format!(" | max MiG count: {}", max_mig_device_count));
                 }
             }
-
-            // let mut max_mig_device_count: raw::c_uint = 0 as raw::c_uint;
-            // let max_mig_device_count_ptr: *mut raw::c_uint = &mut max_mig_device_count as *mut raw::c_uint;
-            // nvml_lib.nvmlDeviceGetMaxMigDeviceCount(raw_device_handle, max_mig_device_count_ptr);
-            // println!("max mig count is {}", max_mig_device_count);
         }
     }
 

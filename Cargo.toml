@@ -1,6 +1,6 @@
 [package]
 name = "gpuinfo"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Edward Hu <bodunhu@utexas.edu>"]
 edition = "2018"
 license = "MIT"
