@@ -10,7 +10,6 @@ use std::{thread, time::Duration};
 fn main() {
     let opt = argparse::argparse();
 
-    // let nvidia_gpu_stat = nvidia_gpu_exec(opt);
     match nvidia_gpu_exec(opt) {
         Ok(_nvidia_gpu_stat) => (),
         Err(error) => panic!("Failed to grab status for NVIDIA GPU, exiting with err: {:?}", error),

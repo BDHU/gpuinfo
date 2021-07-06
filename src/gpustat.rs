@@ -194,15 +194,20 @@ pub fn dump_gpu_stat(device: nvml_wrapper::device::Device) {
         let new_mig_device_handle_ptr: *mut nvmlDevice_t = &mut new_mig_device_handle as *mut nvmlDevice_t;
         nvml_lib.nvmlDeviceGetMigDeviceHandleByIndex(raw_device_handle, 0 as raw::c_uint, new_mig_device_handle_ptr);
 
-        if nvml_lib.nvmlDeviceIsMigDeviceHandle(new_mig_device_handle, is_mig_device_ptr) != nvml_wrapper_sys::bindings::nvmlReturn_enum_NVML_SUCCESS {
-            println!("return error");
+        if nvml_lib.nvmlDeviceIsMigDeviceHandle(new_mig_device_handle, is_mig_device_ptr) == nvml_wrapper_sys::bindings::nvmlReturn_enum_NVML_SUCCESS {
+            // println!("return error");
+            if is_mig_device == 1 as u32 {
+                let mut max_mig_device_count: raw::c_uint = 0 as raw::c_uint;
+                let max_mig_device_count_ptr: *mut raw::c_uint = &mut max_mig_device_count as *mut raw::c_uint;
+                nvml_lib.nvmlDeviceGetMaxMigDeviceCount(raw_device_handle, max_mig_device_count_ptr);
+                result.push_str(&format!(" | max MiG count: {}", max_mig_device_count));
+            }
         }
-        println!("Device is {}", is_mig_device);
 
-        let mut max_mig_device_count: raw::c_uint = 0 as raw::c_uint;
-        let max_mig_device_count_ptr: *mut raw::c_uint = &mut max_mig_device_count as *mut raw::c_uint;
-        nvml_lib.nvmlDeviceGetMaxMigDeviceCount(raw_device_handle, max_mig_device_count_ptr);
-        println!("max mig count is {}", max_mig_device_count);
+        // let mut max_mig_device_count: raw::c_uint = 0 as raw::c_uint;
+        // let max_mig_device_count_ptr: *mut raw::c_uint = &mut max_mig_device_count as *mut raw::c_uint;
+        // nvml_lib.nvmlDeviceGetMaxMigDeviceCount(raw_device_handle, max_mig_device_count_ptr);
+        // println!("max mig count is {}", max_mig_device_count);
     }
 
     println!("{}", result);
@@ -221,10 +226,16 @@ pub fn dump_all_gpu_stats(nvml: &nvml_wrapper::NVML) -> Result<(), nvml_wrapper:
 
 #[cfg(not(target_os = "windows"))]
 fn get_process_name(sys: &sysinfo::System, pid: u32)-> String {
-    sys.get_process(pid as i32).unwrap().name().to_string()
+    if let Some(process) = sys.process(pid as i32) {
+        return process.name().to_string();
+    }
+    return String::from("");
 }
 
 #[cfg(target_os = "windows")]
 fn get_process_name(sys: &sysinfo::System, pid: u32)-> String {
-    sys.get_process(pid as usize).unwrap().name().to_string()
+    if let Some(process) = sys.process(pid as usize) {
+        return process.name().to_string();
+    }
+    return String::from("");
 }
